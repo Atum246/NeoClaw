@@ -71,7 +71,7 @@ Watch a quick walkthrough: [Deploying NeoClaw on HF Spaces](https://youtube.com/
 
 Click the button below to create your own copy:
 
-[![Duplicate this Space](https://huggingface.co/datasets/huggingface/badges/raw/main/duplicate-this-space-sm.svg)](https://huggingface.co/spaces/neo-claw/NeoClaw?duplicate=true)
+[![Duplicate this Space](https://huggingface.co/datasets/huggingface/badges/raw/main/duplicate-this-space-sm.svg)](https://huggingface.co/spaces/Atum246/NeoClaw?duplicate=true)
 
 ### Step 2: Set Your Secrets
 
@@ -334,7 +334,7 @@ NeoClaw includes a beautiful real-time dashboard at your Space URL:
 
 ```bash
 # Clone
-git clone https://github.com/neo-claw/NeoClaw.git
+git clone https://github.com/Atum246/NeoClaw.git
 cd NeoClaw
 
 # Setup
