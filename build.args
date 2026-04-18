@@ -1,0 +1,13 @@
+## 📦 NeoClaw Build Args
+
+# OpenClaw version to install
+ARG OPENCLAW_VERSION=latest
+
+# Node.js version for health server & dashboard
+ARG NODE_VERSION=20
+
+# Python version for workspace sync
+ARG PYTHON_VERSION=3.11
+
+# Base OS
+ARG BASE_IMAGE=ubuntu:22.04
