@@ -67,13 +67,31 @@ Watch a quick walkthrough: [Deploying NeoClaw on HF Spaces](https://youtube.com/
 
 ## 🚀 Quick Start
 
-### Step 1: Duplicate This Space
+### 🦞 One-Click Deploy (Recommended)
+
+Use the deploy form to set up everything automatically — no manual configuration needed!
+
+[![Deploy NeoClaw](https://img.shields.io/badge/🦞-One_Click_Deploy-purple?style=for-the-badge&logo=huggingface)](https://atum246.github.io/NeoClaw/deploy.html)
+
+The form lets you:
+- 🤖 Choose your AI provider and model
+- 🔑 Enter your API key and gateway token
+- ⏰ Configure UptimeRobot and cron-job.org keep-alive
+- 📱 Set up Telegram, Discord, or WhatsApp
+- 🚀 **Creates your Space and sets all secrets automatically via the HuggingFace API**
+
+### 📋 Manual Setup
+
+<details>
+<summary>Click to expand manual steps</summary>
+
+#### Step 1: Duplicate This Space
 
 Click the button below to create your own copy:
 
-[![Duplicate this Space](https://huggingface.co/datasets/huggingface/badges/raw/main/duplicate-this-space-sm.svg)](https://huggingface.co/spaces/Atum246/NeoClaw?duplicate=true)
+[![Duplicate this Space](https://huggingface.co/datasets/huggingface/badges/raw/main/duplicate-this-space-sm.svg)](https://huggingface.co/new-space?duplicate=Atum246/NeoClaw)
 
-### Step 2: Set Your Secrets
+#### Step 2: Set Your Secrets
 
 Navigate to your new Space's **Settings**, scroll down to **Variables and secrets**, and add the following three under **Secrets**:
 
@@ -89,9 +107,13 @@ LLM_API_KEY=sk-or-v1-xxxxxxxx
 LLM_MODEL=openrouter/anthropic/claude-sonnet-4-6
 ```
 
-### Step 3: Wait for Build & Start Chatting! 🎉
+#### Step 3: Wait for Build & Start Chatting! 🎉
 
 The Space will build the container and start up automatically. Monitor the build in the **Logs** tab. Once it's running, you're ready to chat! 👇
+
+</details>
+
+---
 
 ---
 

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🦞⚡ NeoClaw — Deploy Your AI Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0f172a;--card:rgba(30,41,59,.5);--card-border:rgba(51,65,85,.5);
+      --input-bg:transparent;--input-border:rgba(71,85,105,.6);
+      --text:#f1f5f9;--text-muted:#64748b;--text-dim:#94a3b8;
+      --blue:#3b82f6;--blue-hover:#2563eb;--green:#34d399;--red:#f87171;
+    }
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .bg-orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0}
+    .bg-orb-1{width:500px;height:500px;background:rgba(59,130,246,.08);top:-150px;right:-100px}
+    .bg-orb-2{width:400px;height:400px;background:rgba(139,92,246,.06);bottom:-100px;left:-100px}
+    .screen{position:relative;z-index:1;width:100%;max-width:480px;padding:24px;animation:fadeIn .5s ease}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .card{background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:24px;padding:48px 40px}
+    .card-header{text-align:center;margin-bottom:36px}
+    .card-header .emoji-row{font-size:28px;margin-bottom:16px;letter-spacing:6px}
+    .card-header h1{font-size:26px;font-weight:700;margin-bottom:8px}
+    .card-header p{font-size:14px;color:var(--text-muted)}
+
+    .divider{display:flex;align-items:center;gap:16px;margin:24px 0;color:var(--text-muted);font-size:12px;font-weight:500}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--card-border)}
+
+    .provider-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:24px;scrollbar-width:none}
+    .provider-scroll::-webkit-scrollbar{display:none}
+    .provider-pill{flex-shrink:0;padding:10px 18px;border:1px solid var(--card-border);border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;transition:all .25s;background:transparent;color:var(--text-muted);user-select:none;white-space:nowrap}
+    .provider-pill:hover{border-color:rgba(59,130,246,.4);color:var(--text-dim)}
+    .provider-pill.selected{background:rgba(59,130,246,.15);border-color:var(--blue);color:#93c5fd}
+
+    .input-group{position:relative;margin-bottom:20px}
+    .input-group label{display:block;font-size:13px;font-weight:500;color:var(--text-muted);margin-bottom:8px}
+    .input-group input,.input-group select{width:100%;padding:14px 0;background:var(--input-bg);border:none;border-bottom:1px solid var(--input-border);color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:border-color .3s}
+    .input-group input:focus,.input-group select:focus{border-bottom-color:var(--blue)}
+    .input-group input::placeholder{color:rgba(100,116,139,.5)}
+    .input-group input.error{border-bottom-color:var(--red)}
+    .input-group select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 4px center;padding-right:24px}
+    .input-group select option{background:#1e293b;color:var(--text)}
+    .input-actions{position:absolute;right:0;bottom:12px;display:flex;gap:4px}
+    .input-action-btn{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:4px 6px;border-radius:6px;transition:all .2s}
+    .input-action-btn:hover{color:var(--text);background:rgba(255,255,255,.05)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .input-hint{font-size:12px;color:var(--text-muted);margin-top:6px}
+    .validation-msg{font-size:12px;margin-top:4px;display:none}
+    .validation-msg.error{color:var(--red);display:block}
+    .validation-msg.success{color:var(--green);display:block}
+
+    .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(51,65,85,.3);margin-bottom:20px}
+    .toggle-row .toggle-text .label{font-size:14px;font-weight:500}
+    .toggle-row .toggle-text .hint{font-size:12px;color:var(--text-muted);margin-top:2px}
+    .toggle-switch{position:relative;width:44px;height:24px;flex-shrink:0}
+    .toggle-switch input{opacity:0;width:0;height:0}
+    .toggle-switch .slider{position:absolute;inset:0;background:rgba(51,65,85,.8);border-radius:24px;cursor:pointer;transition:.3s}
+    .toggle-switch .slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:var(--text-dim);border-radius:50%;transition:.3s}
+    .toggle-switch input:checked+.slider{background:var(--blue)}
+    .toggle-switch input:checked+.slider::before{transform:translateX(20px);background:#fff}
+
+    .expand-header{display:flex;align-items:center;justify-content:space-between;padding:14px 0;cursor:pointer;border-bottom:1px solid rgba(51,65,85,.3)}
+    .expand-header .expand-label{font-size:13px;font-weight:500;color:var(--text-muted);display:flex;align-items:center;gap:8px}
+    .expand-header .arrow{color:var(--text-muted);font-size:12px;transition:transform .3s}
+    .expand-header.open .arrow{transform:rotate(90deg)}
+    .expand-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .expand-body.open{max-height:1000px}
+
+    .btn-primary{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;background:var(--blue);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .3s;margin-top:8px}
+    .btn-primary:hover{background:var(--blue-hover);transform:translateY(-1px)}
+    .btn-primary:active{transform:translateY(0)}
+    .btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none!important}
+    .btn-secondary{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:transparent;border:1px solid var(--card-border);border-radius:8px;color:var(--text-muted);font-size:12px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .2s}
+    .btn-secondary:hover{border-color:rgba(59,130,246,.4);color:var(--text-dim)}
+
+    /* Screen 2 */
+    .final-card{text-align:center}
+    .model-display{display:inline-flex;align-items:center;gap:12px;padding:16px 28px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);border-radius:16px;margin:20px 0}
+    .model-display .model-icon{font-size:32px}
+    .model-display .model-info{text-align:left}
+    .model-display .model-name{font-size:15px;font-weight:600}
+    .model-display .model-provider{font-size:12px;color:var(--text-muted)}
+    .status-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid rgba(51,65,85,.3)}
+    .status-item:last-child{border-bottom:none}
+    .status-icon{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:18px;flex-shrink:0}
+    .status-icon.green{background:rgba(52,211,153,.1)}
+    .status-icon.blue{background:rgba(59,130,246,.1)}
+    .status-icon.purple{background:rgba(139,92,246,.1)}
+    .status-icon.orange{background:rgba(251,146,60,.1)}
+    .status-text .status-label{font-size:14px;font-weight:500}
+    .status-text .status-value{font-size:12px;color:var(--text-muted);word-break:break-all}
+    .link-card{display:block;padding:16px 20px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:12px;text-decoration:none;color:var(--text);margin:12px 0;transition:all .2s}
+    .link-card:hover{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.4)}
+    .link-card .link-title{font-size:14px;font-weight:600;margin-bottom:2px}
+    .link-card .link-url{font-size:12px;color:var(--text-muted);font-family:'SF Mono',monospace}
+    .btn-back{display:inline-flex;align-items:center;gap:6px;padding:12px 24px;background:transparent;border:1px solid var(--card-border);border-radius:12px;color:var(--text-dim);font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .2s;margin-top:8px}
+    .btn-back:hover{border-color:rgba(59,130,246,.4);color:var(--text)}
+
+    /* Progress bar */
+    .progress-bar{width:100%;height:4px;background:rgba(51,65,85,.5);border-radius:4px;margin:20px 0 8px;overflow:hidden}
+    .progress-fill{height:100%;background:var(--blue);border-radius:4px;transition:width .5s ease}
+    .progress-text{font-size:12px;color:var(--text-muted);text-align:center}
+
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#000;padding:10px 24px;border-radius:100px;font-size:13px;font-weight:600;z-index:100;transition:transform .3s;pointer-events:none}
+    .toast.show{transform:translateX(-50%) translateY(0)}
+    .spinner{display:inline-block;width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .hidden{display:none!important}
+    @media(max-width:520px){.card{padding:36px 24px}.row{grid-template-columns:1fr}.card-header h1{font-size:22px}}
+  </style>
+</head>
+<body>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <!-- ========== SCREEN 1: SETUP ========== -->
+  <div class="screen" id="screen1">
+    <div class="card">
+      <div class="card-header">
+        <div class="emoji-row">⚡🦞</div>
+        <h1>Deploy NeoClaw</h1>
+        <p>Your always-on AI assistant — zero config</p>
+      </div>
+
+      <!-- HF Token -->
+      <div class="input-group">
+        <label>HuggingFace Token</label>
+        <input type="password" id="hfToken" placeholder="hf_xxxxxxxxxx" autocomplete="off">
+        <div class="input-actions">
+          <button class="input-action-btn" onclick="toggleVis('hfToken',this)" title="Show/hide">👁️</button>
+        </div>
+        <div class="input-hint">Write access token from <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--blue);text-decoration:none">huggingface.co/settings/tokens</a></div>
+        <div class="validation-msg" id="hfTokenValidation"></div>
+      </div>
+
+      <!-- Provider -->
+      <label style="font-size:13px;font-weight:500;color:var(--text-muted);display:block;margin-bottom:10px">Choose your AI provider</label>
+      <div class="provider-scroll" id="providerScroll">
+        <div class="provider-pill selected" data-provider="openrouter">🌐 OpenRouter</div>
+        <div class="provider-pill" data-provider="anthropic">🧠 Anthropic</div>
+        <div class="provider-pill" data-provider="openai">✨ OpenAI</div>
+        <div class="provider-pill" data-provider="google">💎 Google</div>
+        <div class="provider-pill" data-provider="deepseek">🔥 DeepSeek</div>
+        <div class="provider-pill" data-provider="xai">⚡ xAI</div>
+        <div class="provider-pill" data-provider="mistral">🌊 Mistral</div>
+        <div class="provider-pill" data-provider="moonshot">🌙 Moonshot</div>
+        <div class="provider-pill" data-provider="ollama">🏠 Ollama</div>
+      </div>
+
+      <div class="input-group">
+        <label>API Key</label>
+        <input type="password" id="llmKey" placeholder="Enter your API key" autocomplete="off">
+        <div class="input-actions">
+          <button class="input-action-btn" onclick="toggleVis('llmKey',this)" title="Show/hide">👁️</button>
+        </div>
+        <div class="input-hint" id="keyHint">Your API key from OpenRouter</div>
+        <div class="validation-msg" id="keyValidation"></div>
+      </div>
+
+      <div class="input-group">
+        <label>Model</label>
+        <select id="llmModel"><option value="">Select a model</option></select>
+      </div>
+
+      <div class="input-group">
+        <label>Gateway Token</label>
+        <input type="password" id="gatewayToken" placeholder="Create a strong password" autocomplete="off">
+        <div class="input-actions">
+          <button class="input-action-btn" onclick="genToken()" title="Generate random">🎲</button>
+          <button class="input-action-btn" onclick="toggleVis('gatewayToken',this)" title="Show/hide">👁️</button>
+        </div>
+        <div class="input-hint">Protects your dashboard & CLI access</div>
+        <div class="validation-msg" id="tokenValidation"></div>
+      </div>
+
+      <div class="divider">HuggingFace Space</div>
+
+      <div class="row">
+        <div class="input-group">
+          <label>Space Name</label>
+          <input type="text" id="spaceName" placeholder="my-neoclaw">
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:flex-end;padding-bottom:4px">
+          <div class="toggle-row" style="border:none;padding:0;margin:0">
+            <div class="toggle-text">
+              <div class="label">Public</div>
+              <div class="hint">Better for keep-alive</div>
+            </div>
+            <label class="toggle-switch"><input type="checkbox" id="isPublic" checked><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional: Keep-Alive -->
+      <div class="expand-header" onclick="this.classList.toggle('open');document.getElementById('keepaliveBody').classList.toggle('open')">
+        <span class="expand-label">⏰ Keep-Alive Services</span><span class="arrow">▶</span>
+      </div>
+      <div class="expand-body" id="keepaliveBody">
+        <div style="padding-top:20px">
+          <div class="input-group">
+            <label>UptimeRobot API Key</label>
+            <input type="password" id="uptimeKey" placeholder="Your UptimeRobot Main API key">
+            <div class="input-hint">Get it from <a href="https://uptimerobot.com" target="_blank" style="color:var(--blue);text-decoration:none">uptimerobot.com</a></div>
+          </div>
+          <div class="input-group">
+            <label>cron-job.org API Key</label>
+            <input type="password" id="cronKey" placeholder="Your cron-job.org API key">
+            <div class="input-hint">Get it from <a href="https://cron-job.org" target="_blank" style="color:var(--blue);text-decoration:none">cron-job.org</a></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional: Messaging -->
+      <div class="expand-header" onclick="this.classList.toggle('open');document.getElementById('messagingBody').classList.toggle('open')">
+        <span class="expand-label">📱 Messaging Channels</span><span class="arrow">▶</span>
+      </div>
+      <div class="expand-body" id="messagingBody">
+        <div style="padding-top:20px">
+          <div class="row">
+            <div class="input-group"><label>Telegram Bot Token</label><input type="password" id="tgToken" placeholder="From @BotFather"></div>
+            <div class="input-group"><label>Telegram User ID</label><input type="text" id="tgUserId" placeholder="From @userinfobot"></div>
+          </div>
+          <div class="input-group"><label>Discord Bot Token</label><input type="password" id="discordToken" placeholder="From Discord Developer Portal"></div>
+          <div class="toggle-row">
+            <div class="toggle-text"><div class="label">Enable WhatsApp</div><div class="hint">Requires HF backup for sessions</div></div>
+            <label class="toggle-switch"><input type="checkbox" id="whatsappEnabled"><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Optional: Backup -->
+      <div class="expand-header" onclick="this.classList.toggle('open');document.getElementById('backupBody').classList.toggle('open')">
+        <span class="expand-label">💾 Backup & Sync</span><span class="arrow">▶</span>
+      </div>
+      <div class="expand-body" id="backupBody">
+        <div style="padding-top:20px">
+          <div class="input-group"><label>HF Username</label><input type="text" id="hfUser" placeholder="your-username"><div class="input-hint">Used for backup dataset</div></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="deployBtn" onclick="deploy()">
+        <span id="deployText">🦞 One-Click Deploy →</span>
+      </button>
+
+      <div style="text-align:center;margin-top:16px">
+        <button class="btn-secondary" onclick="copyConfig()">📋 Copy Config as .env</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 2: DEPLOYING ========== -->
+  <div class="screen hidden" id="screen2">
+    <div class="card final-card">
+      <div class="card-header">
+        <div class="emoji-row" id="deployEmoji">🚀</div>
+        <h1 id="deployTitle">Deploying...</h1>
+        <p id="deploySubtitle">Setting up your NeoClaw space</p>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-text" id="progressText">Initializing...</div>
+    </div>
+  </div>
+
+  <!-- ========== SCREEN 3: SUCCESS ========== -->
+  <div class="screen hidden" id="screen3">
+    <div class="card final-card">
+      <div class="card-header">
+        <div class="emoji-row">🎉✨🦞</div>
+        <h1>You're All Set!</h1>
+        <p>Your NeoClaw is live and ready</p>
+      </div>
+      <div class="model-display" id="modelDisplay">
+        <div class="model-icon" id="finalProviderIcon">🌐</div>
+        <div class="model-info">
+          <div class="model-name" id="finalModel">—</div>
+          <div class="model-provider" id="finalProvider">—</div>
+        </div>
+      </div>
+      <div class="status-item">
+        <div class="status-icon green">💬</div>
+        <div class="status-text"><div class="status-label">Web Chat</div><div class="status-value" id="finalChatUrl">—</div></div>
+      </div>
+      <div class="status-item">
+        <div class="status-icon blue">📊</div>
+        <div class="status-text"><div class="status-label">Dashboard</div><div class="status-value" id="finalDashUrl">—</div></div>
+      </div>
+      <div class="status-item" id="statusUptime">
+        <div class="status-icon purple">⏰</div>
+        <div class="status-text"><div class="status-label">UptimeRobot</div><div class="status-value" id="finalUptime">Not configured</div></div>
+      </div>
+      <div class="status-item" id="statusCron">
+        <div class="status-icon orange">🔔</div>
+        <div class="status-text"><div class="status-label">cron-job.org</div><div class="status-value" id="finalCron">Not configured</div></div>
+      </div>
+
+      <div class="divider">Quick Links</div>
+      <a class="link-card" id="linkChat" href="#" target="_blank">
+        <div class="link-title">💬 Open Web Chat</div>
+        <div class="link-url" id="linkChatUrl">—</div>
+      </a>
+      <a class="link-card" id="linkDash" href="#" target="_blank">
+        <div class="link-title">📊 Open Dashboard</div>
+        <div class="link-url" id="linkDashUrl">—</div>
+      </a>
+      <a class="link-card" id="linkSettings" href="#" target="_blank">
+        <div class="link-title">⚙️ Space Settings</div>
+        <div class="link-url" id="linkSettingsUrl">—</div>
+      </a>
+
+      <button class="btn-back" onclick="goBack()">← Back to Setup</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const HF_API = 'https://huggingface.co/api';
+    const SOURCE_REPO = 'Atum246/NeoClaw';
+    const GITHUB_API = 'https://api.github.com/repos/Atum246/NeoClaw/git/trees/main?recursive=1';
+    const GITHUB_RAW = 'https://raw.githubusercontent.com/Atum246/NeoClaw/main/';
+
+    const models = {
+      openrouter:[{val:'openrouter/anthropic/claude-sonnet-4-6',label:'Claude Sonnet 4.6 ⭐'},{val:'openrouter/anthropic/claude-3.5-sonnet',label:'Claude 3.5 Sonnet'},{val:'openrouter/openai/gpt-4o',label:'GPT-4o'},{val:'openrouter/openai/gpt-4o-mini',label:'GPT-4o Mini'},{val:'openrouter/google/gemini-2.5-flash',label:'Gemini 2.5 Flash'},{val:'openrouter/google/gemini-2.5-pro',label:'Gemini 2.5 Pro'},{val:'openrouter/meta-llama/llama-3.3-70b-instruct',label:'Llama 3.3 70B'},{val:'openrouter/deepseek/deepseek-v3.2',label:'DeepSeek V3.2'}],
+      anthropic:[{val:'anthropic/claude-sonnet-4-6',label:'Claude Sonnet 4.6 ⭐'},{val:'anthropic/claude-3.5-sonnet',label:'Claude 3.5 Sonnet'},{val:'anthropic/claude-3.5-haiku',label:'Claude 3.5 Haiku'},{val:'anthropic/claude-opus-4',label:'Claude Opus 4'}],
+      openai:[{val:'openai/gpt-4o',label:'GPT-4o ⭐'},{val:'openai/gpt-4o-mini',label:'GPT-4o Mini'},{val:'openai/gpt-4.5-preview',label:'GPT-4.5 Preview'},{val:'openai/o3-mini',label:'o3-mini'}],
+      google:[{val:'google/gemini-2.5-flash',label:'Gemini 2.5 Flash ⭐'},{val:'google/gemini-2.5-pro',label:'Gemini 2.5 Pro'}],
+      deepseek:[{val:'deepseek/deepseek-v3.2',label:'DeepSeek V3.2 ⭐'},{val:'deepseek/deepseek-r1',label:'DeepSeek R1'}],
+      xai:[{val:'xai/grok-4',label:'Grok 4 ⭐'},{val:'xai/grok-3',label:'Grok 3'}],
+      mistral:[{val:'mistral/mistral-large-latest',label:'Mistral Large ⭐'},{val:'mistral/mistral-medium-latest',label:'Mistral Medium'}],
+      moonshot:[{val:'moonshot/kimi-k2.5',label:'Kimi K2.5 ⭐'},{val:'moonshot/kimi-k2',label:'Kimi K2'}],
+      ollama:[{val:'ollama/llama3',label:'Llama 3 (Local)'},{val:'ollama/mistral',label:'Mistral (Local)'}]
+    };
+    const keyHints={openrouter:'Your API key from OpenRouter — supports 40+ providers',anthropic:'From console.anthropic.com — starts with sk-ant-',openai:'From platform.openai.com — starts with sk-',google:'From ai.google.dev (AI Studio)',deepseek:'From platform.deepseek.com',xai:'From console.x.ai',mistral:'From console.mistral.ai',moonshot:'From platform.moonshot.cn',ollama:'No key needed for local — enter any placeholder'};
+    const providerIcons={openrouter:'🌐',anthropic:'🧠',openai:'✨',google:'💎',deepseek:'🔥',xai:'⚡',mistral:'🌊',moonshot:'🌙',ollama:'🏠'};
+
+    let currentProvider='openrouter';
+
+    document.querySelectorAll('.provider-pill').forEach(p=>{p.addEventListener('click',()=>{document.querySelectorAll('.provider-pill').forEach(q=>q.classList.remove('selected'));p.classList.add('selected');currentProvider=p.dataset.provider;populateModels(currentProvider);document.getElementById('keyHint').textContent=keyHints[currentProvider]})});
+    function populateModels(p){const s=document.getElementById('llmModel');s.innerHTML='<option value="">Select a model</option>';(models[p]||[]).forEach(m=>{const o=document.createElement('option');o.value=m.val;o.textContent=m.label;s.appendChild(o)})}
+    populateModels('openrouter');
+
+    function toggleVis(id,btn){const i=document.getElementById(id);i.type=i.type==='password'?'text':'password';btn.textContent=i.type==='password'?'👁️':'🙈'}
+    function genToken(){const a=new Uint8Array(16);crypto.getRandomValues(a);const t=Array.from(a).map(b=>b.toString(16).padStart(2,'0')).join('');document.getElementById('gatewayToken').value=t;document.getElementById('gatewayToken').type='text';showToast('🎲 Token generated!')}
+    function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+    function validate(){
+      let ok=true;
+      const hfT=document.getElementById('hfToken').value.trim();
+      const k=document.getElementById('llmKey').value.trim();
+      const m=document.getElementById('llmModel').value;
+      const t=document.getElementById('gatewayToken').value.trim();
+
+      const hv=document.getElementById('hfTokenValidation');
+      if(!hfT){hv.className='validation-msg error';hv.textContent='⚠ HF token is required';document.getElementById('hfToken').classList.add('error');ok=false}
+      else{hv.className='validation-msg success';hv.textContent='✓ Token entered';document.getElementById('hfToken').classList.remove('error')}
+
+      const kv=document.getElementById('keyValidation');
+      if(!k){kv.className='validation-msg error';kv.textContent='⚠ API key is required';document.getElementById('llmKey').classList.add('error');ok=false}
+      else{kv.className='validation-msg success';kv.textContent='✓ Looks good';document.getElementById('llmKey').classList.remove('error')}
+
+      const tv=document.getElementById('tokenValidation');
+      if(!t){tv.className='validation-msg error';tv.textContent='⚠ Gateway token is required';document.getElementById('gatewayToken').classList.add('error');ok=false}
+      else if(t.length<8){tv.className='validation-msg error';tv.textContent='⚠ At least 8 characters';document.getElementById('gatewayToken').classList.add('error');ok=false}
+      else{tv.className='validation-msg success';tv.textContent='✓ Strong token';document.getElementById('gatewayToken').classList.remove('error')}
+
+      if(!m)ok=false;
+      return ok;
+    }
+
+    function buildSecrets(){
+      return {
+        LLM_API_KEY: document.getElementById('llmKey').value.trim(),
+        LLM_MODEL: document.getElementById('llmModel').value,
+        GATEWAY_TOKEN: document.getElementById('gatewayToken').value.trim(),
+        ...(document.getElementById('uptimeKey').value.trim()?{UPTIMEROBOT_API_KEY:document.getElementById('uptimeKey').value.trim()}:{}),
+        ...(document.getElementById('cronKey').value.trim()?{CRONJOB_ORG_KEY:document.getElementById('cronKey').value.trim()}:{}),
+        ...(document.getElementById('tgToken').value.trim()?{TELEGRAM_BOT_TOKEN:document.getElementById('tgToken').value.trim()}:{}),
+        ...(document.getElementById('tgUserId').value.trim()?{TELEGRAM_USER_ID:document.getElementById('tgUserId').value.trim()}:{}),
+        ...(document.getElementById('discordToken').value.trim()?{DISCORD_TOKEN:document.getElementById('discordToken').value.trim()}:{}),
+        ...(document.getElementById('hfUser').value.trim()?{HF_USERNAME:document.getElementById('hfUser').value.trim()}:{}),
+        ...(document.getElementById('hfUser').value.trim()?{HF_TOKEN:document.getElementById('hfToken').value.trim()}:{}),
+        ...(document.getElementById('whatsappEnabled').checked?{WHATSAPP_ENABLED:'true'}:{})
+      };
+    }
+
+    function buildEnvText(){
+      const s=buildSecrets();
+      return Object.entries(s).map(([k,v])=>`${k}=${v}`).join('\n');
+    }
+
+    function copyConfig(){navigator.clipboard.writeText(buildEnvText()).then(()=>showToast('✅ Config copied!'))}
+
+    function setProgress(pct,text){
+      document.getElementById('progressFill').style.width=pct+'%';
+      document.getElementById('progressText').textContent=text;
+    }
+
+    // ─── HF API helpers ───
+    async function hfApi(path,method='GET',body=null,token){
+      const opts={method,headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'}};
+      if(body)opts.body=JSON.stringify(body);
+      const res=await fetch(`${HF_API}${path}`,opts);
+      if(!res.ok){const err=await res.text();throw new Error(`HF API ${method} ${path}: ${res.status} - ${err}`)}
+      return res.json().catch(()=>({}));
+    }
+
+    async function setSecret(username,spaceName,key,value,token){
+      const res=await fetch(`${HF_API}/models/${username}/${spaceName}/settings/secrets`,{
+        method:'POST',
+        headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
+        body:JSON.stringify({key,value})
+      });
+      if(!res.ok){const err=await res.text();throw new Error(`Failed to set secret ${key}: ${res.status} - ${err}`)}
+    }
+
+    async function getGitHubFiles(){
+      const res=await fetch(GITHUB_API);
+      if(!res.ok)throw new Error('Failed to fetch repo tree');
+      const data=await res.json();
+      return data.tree.filter(f=>f.type==='blob').map(f=>({path:f.path,size:f.size}));
+    }
+
+    async function uploadFile(username,spaceName,filePath,token){
+      // Fetch raw content from GitHub
+      const res=await fetch(GITHUB_RAW+filePath);
+      if(!res.ok)throw new Error(`Failed to fetch ${filePath} from GitHub`);
+      const content=await res.arrayBuffer();
+
+      // Upload to HF space
+      const uploadRes=await fetch(`${HF_API}/${username}/${spaceName}/${filePath}`,{
+        method:'PUT',
+        headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/octet-stream'},
+        body:content
+      });
+      if(!uploadRes.ok){const err=await uploadRes.text();throw new Error(`Failed to upload ${filePath}: ${uploadRes.status}`)}
+    }
+
+    // ─── Main deploy ───
+    async function deploy(){
+      if(!validate())return;
+
+      // Switch to deploy screen
+      document.getElementById('screen1').classList.add('hidden');
+      document.getElementById('screen2').classList.remove('hidden');
+
+      const hfToken=document.getElementById('hfToken').value.trim();
+      const spaceName=document.getElementById('spaceName').value.trim()||'neoclaw';
+      const isPublic=document.getElementById('isPublic').checked;
+      const secrets=buildSecrets();
+
+      try{
+        // Step 1: Get username
+        setProgress(5,'🔍 Getting your HF profile...');
+        const user=await hfApi('/whoami','GET',null,hfToken);
+        const username=user.name;
+        if(!username)throw new Error('Could not determine HF username');
+
+        // Step 2: Create space
+        setProgress(15,'🏗️ Creating HuggingFace Space...');
+        try{
+          await hfApi('/repos/create','POST',{
+            type:'space',
+            name:spaceName,
+            private:!isPublic,
+            sdk:'docker',
+            license:'mit',
+            spaceHardware:'cpu-basic'
+          },hfToken);
+        }catch(e){
+          if(e.message.includes('409')||e.message.includes('already exists')){
+            throw new Error(`Space "${spaceName}" already exists. Please choose a different name.`);
+          }
+          throw e;
+        }
+
+        // Step 3: Set secrets
+        setProgress(30,'🔐 Configuring secrets...');
+        const secretEntries=Object.entries(secrets);
+        for(let i=0;i<secretEntries.length;i++){
+          const [key,value]=secretEntries[i];
+          setProgress(30+Math.floor((i/secretEntries.length)*25),`🔐 Setting secret: ${key}...`);
+          await setSecret(username,spaceName,key,value,hfToken);
+        }
+
+        // Step 4: Get file list from GitHub
+        setProgress(55,'📁 Fetching template files...');
+        const files=await getGitHubFiles();
+
+        // Step 5: Upload files
+        for(let i=0;i<files.length;i++){
+          const file=files[i];
+          setProgress(55+Math.floor((i/files.length)*40),`📤 Uploading: ${file.path}...`);
+          try{
+            await uploadFile(username,spaceName,file.path,hfToken);
+          }catch(e){
+            console.warn(`Failed to upload ${file.path}:`,e);
+          }
+        }
+
+        setProgress(100,'✅ Deployment complete!');
+
+        // Build URLs
+        const spaceUrl=`https://${username}-${spaceName}.hf.space`;
+
+        // Switch to success screen
+        setTimeout(()=>{
+          document.getElementById('screen2').classList.add('hidden');
+          document.getElementById('screen3').classList.remove('hidden');
+
+          document.getElementById('finalProviderIcon').textContent=providerIcons[currentProvider]||'🤖';
+          document.getElementById('finalModel').textContent=document.getElementById('llmModel').value;
+          document.getElementById('finalProvider').textContent=currentProvider.charAt(0).toUpperCase()+currentProvider.slice(1);
+          document.getElementById('finalChatUrl').textContent=spaceUrl;
+          document.getElementById('finalDashUrl').textContent=spaceUrl+'/dashboard';
+          document.getElementById('linkChatUrl').textContent=spaceUrl;
+          document.getElementById('linkDashUrl').textContent=spaceUrl+'/dashboard';
+          document.getElementById('linkChat').href=spaceUrl;
+          document.getElementById('linkDash').href=spaceUrl+'/dashboard';
+          document.getElementById('linkSettingsUrl').textContent=`https://huggingface.co/spaces/${username}/${spaceName}/settings`;
+          document.getElementById('linkSettings').href=`https://huggingface.co/spaces/${username}/${spaceName}/settings`;
+          document.getElementById('finalUptime').textContent=document.getElementById('uptimeKey').value.trim()?'✓ Configured':'Not configured';
+          document.getElementById('finalCron').textContent=document.getElementById('cronKey').value.trim()?'✓ Configured':'Not configured';
+        },800);
+
+      }catch(e){
+        console.error('Deploy error:',e);
+        setProgress(0,`❌ Error: ${e.message}`);
+        document.getElementById('deployEmoji').textContent='❌';
+        document.getElementById('deployTitle').textContent='Deployment Failed';
+        document.getElementById('deploySubtitle').textContent=e.message;
+        // Show back button
+        setTimeout(()=>{
+          const card=document.getElementById('screen2').querySelector('.card');
+          if(!card.querySelector('.btn-back')){
+            const btn=document.createElement('button');
+            btn.className='btn-back';btn.textContent='← Back to Setup';
+            btn.onclick=goBack;
+            card.appendChild(btn);
+          }
+        },500);
+      }
+    }
+
+    function goBack(){
+      document.getElementById('screen2').classList.add('hidden');
+      document.getElementById('screen3').classList.add('hidden');
+      document.getElementById('screen1').classList.remove('hidden');
+      document.getElementById('deployBtn').disabled=false;
+      document.getElementById('deployText').textContent='🦞 One-Click Deploy →';
+      // Reset deploy screen
+      document.getElementById('deployEmoji').textContent='🚀';
+      document.getElementById('deployTitle').textContent='Deploying...';
+      document.getElementById('deploySubtitle').textContent='Setting up your NeoClaw space';
+    }
+
+    // ─── Paste auto-fill ───
+    document.addEventListener('paste',e=>{
+      const text=e.clipboardData.getData('text');
+      if(!text.includes('LLM_API_KEY=')&&!text.includes('GATEWAY_TOKEN='))return;
+      e.preventDefault();
+      const map={};
+      text.split('\n').forEach(l=>{const m=l.match(/^([A-Z_]+)=(.+)$/);if(m)map[m[1]]=m[2].trim()});
+      const set=(id,v)=>{if(v)document.getElementById(id).value=v};
+      set('llmKey',map.LLM_API_KEY);set('gatewayToken',map.GATEWAY_TOKEN);
+      set('uptimeKey',map.UPTIMEROBOT_API_KEY);set('cronKey',map.CRONJOB_ORG_KEY);
+      set('tgToken',map.TELEGRAM_BOT_TOKEN);set('tgUserId',map.TELEGRAM_USER_ID);
+      set('discordToken',map.DISCORD_TOKEN);set('hfUser',map.HF_USERNAME);
+      set('hfToken',map.HF_TOKEN);
+      if(map.LLM_MODEL){for(const[p,ms]of Object.entries(models)){if(ms.some(m=>m.val===map.LLM_MODEL)){document.querySelectorAll('.provider-pill').forEach(q=>q.classList.toggle('selected',q.dataset.provider===p));currentProvider=p;populateModels(p);break}}document.getElementById('llmModel').value=map.LLM_MODEL}
+      showToast('✨ Config auto-filled!');
+    });
+  </script>
+</body>
+</html>
