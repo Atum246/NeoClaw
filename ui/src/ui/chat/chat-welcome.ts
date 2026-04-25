@@ -67,6 +67,13 @@ export function renderWelcomeState(props: ChatWelcomeProps) {
         <span class="agent-chat__badge"><img src=${logoUrl} alt="" /> Ready to chat</span>
       </div>
       <p class="agent-chat__hint">Type a message below &middot; <kbd>/</kbd> for commands</p>
+      <div class="agent-chat__panel-hints" style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center;">
+        <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">⚡ Ctrl+1 Execution</span>
+        <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">📦 Ctrl+2 Artifacts</span>
+        <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">📁 Ctrl+3 Files</span>
+        <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">🧠 Ctrl+4 Memory</span>
+        <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">🕐 Ctrl+5 Timeline</span>
+      </div>
       <div class="agent-chat__suggestions">
         ${WELCOME_SUGGESTIONS.map(
           (text) => html`

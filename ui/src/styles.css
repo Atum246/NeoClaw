@@ -8,6 +8,10 @@
 @import "./styles/cron-quick-create.css";
 @import "./styles/usage.css";
 @import "./styles/dreams.css";
+
+/* Chat UI Redesign — Modern AI Chatbot Style */
+@import "./styles/chat-redesign.css";
+@import "./styles/layout-redesign.css";
 @import "@create-markdown/preview/themes/system.css";
 
 .cm-preview {

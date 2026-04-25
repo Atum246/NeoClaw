@@ -223,6 +223,11 @@ export class OpenClawApp extends LitElement {
   @state() sidebarError: string | null = null;
   @state() splitRatio = this.settings.splitRatio;
 
+  // Side panel state (Execution, Artifacts, Files, Memory, Timeline)
+  @state() panelOpen = false;
+  @state() panelTab: import("./panel-render.ts").PanelTab = "execution";
+  @state() panelSplitRatio = 0.35;
+
   @state() nodesLoading = false;
   @state() nodes: Array<Record<string, unknown>> = [];
   @state() devicesLoading = false;
@@ -560,6 +565,33 @@ export class OpenClawApp extends LitElement {
         this.paletteActiveIndex = 0;
       }
     }
+
+    // Panel keyboard shortcuts: Ctrl/Cmd + 1-5 to toggle panels
+    if ((e.metaKey || e.ctrlKey) && !e.shiftKey) {
+      const panelShortcuts: Record<string, import("./panel-render.ts").PanelTab> = {
+        "1": "execution",
+        "2": "artifacts",
+        "3": "files",
+        "4": "memory",
+        "5": "timeline",
+      };
+      const tab = panelShortcuts[e.key];
+      if (tab) {
+        e.preventDefault();
+        this.handleTogglePanel(tab);
+      }
+      // Ctrl/Cmd + 0 to close panel
+      if (e.key === "0") {
+        e.preventDefault();
+        this.handleClosePanel();
+      }
+    }
+
+    // Escape to close panel
+    if (e.key === "Escape" && this.panelOpen) {
+      e.preventDefault();
+      this.handleClosePanel();
+    }
   };
 
   createRenderRoot() {
@@ -592,6 +624,10 @@ export class OpenClawApp extends LitElement {
 
   protected firstUpdated() {
     handleFirstUpdated(this as unknown as Parameters<typeof handleFirstUpdated>[0]);
+    // Request notification permission for task completion alerts
+    import("./notifications.ts").then(({ notifications }) => {
+      notifications.requestPermission();
+    });
   }
 
   disconnectedCallback() {
@@ -960,6 +996,30 @@ export class OpenClawApp extends LitElement {
     const newRatio = Math.max(0.4, Math.min(0.7, ratio));
     this.splitRatio = newRatio;
     this.applySettings({ ...this.settings, splitRatio: newRatio });
+  }
+
+  // Panel handlers for Execution, Artifacts, Files, Memory, Timeline
+  handleTogglePanel(tab?: import("./panel-render.ts").PanelTab) {
+    if (tab && this.panelOpen && this.panelTab === tab) {
+      this.panelOpen = false;
+    } else if (tab) {
+      this.panelTab = tab;
+      this.panelOpen = true;
+    } else {
+      this.panelOpen = !this.panelOpen;
+    }
+  }
+
+  handleClosePanel() {
+    this.panelOpen = false;
+  }
+
+  handlePanelTabChange(tab: import("./panel-render.ts").PanelTab) {
+    this.panelTab = tab;
+  }
+
+  handlePanelSplitRatioChange(ratio: number) {
+    this.panelSplitRatio = Math.max(0.2, Math.min(0.5, ratio));
   }
 
   private async initWebPushState() {

@@ -348,6 +348,42 @@ export function renderChatControls(state: AppViewState) {
       >
         ${renderCronFilterIcon(hiddenCronCount)}
       </button>
+      <span class="chat-controls__separator">|</span>
+      <button
+        class="btn btn--sm btn--icon ${state.panelOpen && state.panelTab === "execution" ? "active" : ""}"
+        @click=${() => state.handleTogglePanel("execution")}
+        title="Execution Panel (Ctrl+1)"
+        aria-label="Toggle execution panel"
+        data-tooltip="Execution"
+      >⚡</button>
+      <button
+        class="btn btn--sm btn--icon ${state.panelOpen && state.panelTab === "artifacts" ? "active" : ""}"
+        @click=${() => state.handleTogglePanel("artifacts")}
+        title="Artifacts Panel (Ctrl+2)"
+        aria-label="Toggle artifacts panel"
+        data-tooltip="Artifacts"
+      >📦</button>
+      <button
+        class="btn btn--sm btn--icon ${state.panelOpen && state.panelTab === "files" ? "active" : ""}"
+        @click=${() => state.handleTogglePanel("files")}
+        title="File Manager (Ctrl+3)"
+        aria-label="Toggle file manager"
+        data-tooltip="Files"
+      >📁</button>
+      <button
+        class="btn btn--sm btn--icon ${state.panelOpen && state.panelTab === "memory" ? "active" : ""}"
+        @click=${() => state.handleTogglePanel("memory")}
+        title="Memory Visualizer (Ctrl+4)"
+        aria-label="Toggle memory panel"
+        data-tooltip="Memory"
+      >🧠</button>
+      <button
+        class="btn btn--sm btn--icon ${state.panelOpen && state.panelTab === "timeline" ? "active" : ""}"
+        @click=${() => state.handleTogglePanel("timeline")}
+        title="Task Timeline (Ctrl+5)"
+        aria-label="Toggle timeline panel"
+        data-tooltip="Timeline"
+      >🕐</button>
     </div>
   `;
 }

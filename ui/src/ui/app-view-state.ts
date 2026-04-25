@@ -119,6 +119,10 @@ export type AppViewState = {
   sidebarContent: SidebarContent | null;
   sidebarError: string | null;
   splitRatio: number;
+  // Side panel state (Execution, Artifacts, Files, Memory, Timeline)
+  panelOpen: boolean;
+  panelTab: import("./panel-render.ts").PanelTab;
+  panelSplitRatio: number;
   scrollToBottom: (opts?: { smooth?: boolean }) => void;
   devicesLoading: boolean;
   devicesError: string | null;

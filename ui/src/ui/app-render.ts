@@ -4,6 +4,7 @@ import { getSafeLocalStorage } from "../local-storage.ts";
 import { refreshChat } from "./app-chat.ts";
 import { DEFAULT_CRON_FORM } from "./app-defaults.ts";
 import { renderUsageTab } from "./app-render-usage-tab.ts";
+import { renderPanelTabs, renderPanelContent, type PanelTab } from "./panel-render.ts";
 import {
   renderChatControls,
   renderChatMobileToggle,
@@ -1287,7 +1288,9 @@ export function renderApp(state: AppViewState) {
         ? "shell--chat-focus"
         : ""} ${navCollapsed ? "shell--nav-collapsed" : ""} ${navDrawerOpen
         ? "shell--nav-drawer-open"
-        : ""} ${state.onboarding ? "shell--onboarding" : ""}"
+        : ""} ${state.onboarding ? "shell--onboarding" : ""} ${state.panelOpen && isChat && !chatFocus
+        ? "shell--chat-with-panel"
+        : ""}"
     >
       <button
         type="button"
@@ -2491,6 +2494,22 @@ export function renderApp(state: AppViewState) {
             })
           : nothing}
       </main>
+      ${state.panelOpen && isChat && !chatFocus
+        ? html`
+            <div class="panel-area">
+              ${renderPanelTabs(
+                state.panelTab,
+                (tab) => state.handlePanelTabChange(tab),
+                () => state.handleClosePanel(),
+                /* executionRunning */ (state.chatToolMessages as unknown[])?.length ?? 0,
+                /* artifactCount */ 0,
+              )}
+              <div class="panel-content">
+                ${renderPanelContent(state.panelTab, state)}
+              </div>
+            </div>
+          `
+        : nothing}
       ${renderExecApprovalPrompt(state)} ${renderGatewayUrlConfirmation(state)} ${nothing}
     </div>
   `;
