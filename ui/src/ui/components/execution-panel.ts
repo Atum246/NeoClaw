@@ -120,8 +120,8 @@ export class ExecutionPanel extends LitElement {
     }
 
     .task-card--active {
-      border-color: var(--accent, #ff5c5c);
-      box-shadow: 0 0 0 1px var(--accent-subtle, rgba(255, 92, 92, 0.1));
+      border-color: var(--accent, #fbbf24);
+      box-shadow: 0 0 0 1px var(--accent-subtle, rgba(251, 191, 36, 0.1));
     }
 
     .task-card--completed {
@@ -153,8 +153,8 @@ export class ExecutionPanel extends LitElement {
     }
 
     .task-icon--running {
-      background: rgba(255, 92, 92, 0.12);
-      color: var(--accent, #ff5c5c);
+      background: rgba(251, 191, 36, 0.12);
+      color: var(--accent, #fbbf24);
       animation: spin 2s linear infinite;
     }
 
@@ -246,9 +246,9 @@ export class ExecutionPanel extends LitElement {
     }
 
     .step-dot--active {
-      border-color: var(--accent, #ff5c5c);
-      background: var(--accent, #ff5c5c);
-      box-shadow: 0 0 8px var(--accent-glow, rgba(255, 92, 92, 0.2));
+      border-color: var(--accent, #fbbf24);
+      background: var(--accent, #fbbf24);
+      box-shadow: 0 0 8px var(--accent-glow, rgba(251, 191, 36, 0.2));
       animation: pulse-dot 1.5s ease-in-out infinite;
     }
 
@@ -269,8 +269,8 @@ export class ExecutionPanel extends LitElement {
     }
 
     @keyframes pulse-dot {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 92, 92, 0.4); }
-      50% { box-shadow: 0 0 0 4px rgba(255, 92, 92, 0); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+      50% { box-shadow: 0 0 0 4px rgba(251, 191, 36, 0); }
     }
 
     .step-connector {
@@ -436,7 +436,7 @@ export class ExecutionPanel extends LitElement {
     }
 
     .artifact-action-btn:hover {
-      background: var(--accent, #ff5c5c);
+      background: var(--accent, #fbbf24);
       color: white;
     }
 
@@ -514,7 +514,7 @@ export class ExecutionPanel extends LitElement {
               ${step.completedAt
                 ? this.formatDuration(step.completedAt - step.startedAt)
                 : isActive
-                  ? html`<span style="color: var(--accent, #ff5c5c)">running...</span>`
+                  ? html`<span style="color: var(--accent, #fbbf24)">running...</span>`
                   : ""}
             </div>
           ` : nothing}

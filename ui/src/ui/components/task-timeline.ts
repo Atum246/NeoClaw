@@ -88,9 +88,9 @@ export class TaskTimeline extends LitElement {
     }
 
     .filter-chip--active {
-      background: var(--accent-subtle, rgba(255, 92, 92, 0.1));
-      color: var(--accent, #ff5c5c);
-      border-color: var(--accent, #ff5c5c);
+      background: var(--accent-subtle, rgba(251, 191, 36, 0.1));
+      color: var(--accent, #fbbf24);
+      border-color: var(--accent, #fbbf24);
     }
 
     .timeline-body {
@@ -173,8 +173,8 @@ export class TaskTimeline extends LitElement {
     }
 
     .timeline-card--selected {
-      border-color: var(--accent, #ff5c5c);
-      box-shadow: 0 0 0 1px var(--accent-subtle, rgba(255, 92, 92, 0.1));
+      border-color: var(--accent, #fbbf24);
+      box-shadow: 0 0 0 1px var(--accent-subtle, rgba(251, 191, 36, 0.1));
     }
 
     .timeline-card-header {

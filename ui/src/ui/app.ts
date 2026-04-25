@@ -574,6 +574,7 @@ export class OpenClawApp extends LitElement {
         "3": "files",
         "4": "memory",
         "5": "timeline",
+        "6": "devices",
       };
       const tab = panelShortcuts[e.key];
       if (tab) {

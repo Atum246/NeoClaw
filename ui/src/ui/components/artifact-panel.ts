@@ -89,8 +89,8 @@ export class ArtifactPanel extends LitElement {
     }
 
     .artifact-tab--active {
-      color: var(--accent, #ff5c5c);
-      border-bottom-color: var(--accent, #ff5c5c);
+      color: var(--accent, #fbbf24);
+      border-bottom-color: var(--accent, #fbbf24);
     }
 
     .artifact-tab-icon {
@@ -161,9 +161,9 @@ export class ArtifactPanel extends LitElement {
     }
 
     .toolbar-btn--active {
-      background: var(--accent-subtle, rgba(255, 92, 92, 0.1));
-      color: var(--accent, #ff5c5c);
-      border-color: var(--accent, #ff5c5c);
+      background: var(--accent-subtle, rgba(251, 191, 36, 0.1));
+      color: var(--accent, #fbbf24);
+      border-color: var(--accent, #fbbf24);
     }
 
     .toolbar-btn svg {
@@ -228,7 +228,7 @@ export class ArtifactPanel extends LitElement {
     }
 
     .code-view .line-highlight {
-      background: var(--accent-subtle, rgba(255, 92, 92, 0.08));
+      background: var(--accent-subtle, rgba(251, 191, 36, 0.08));
       margin: 0 -16px;
       padding: 0 16px;
     }
@@ -286,7 +286,7 @@ export class ArtifactPanel extends LitElement {
     }
 
     .preview-view .markdown-preview blockquote {
-      border-left: 3px solid var(--accent, #ff5c5c);
+      border-left: 3px solid var(--accent, #fbbf24);
       padding-left: 14px;
       margin: 1em 0;
       color: var(--muted, #838387);
@@ -316,7 +316,7 @@ export class ArtifactPanel extends LitElement {
     }
 
     .preview-view .markdown-preview a {
-      color: var(--accent, #ff5c5c);
+      color: var(--accent, #fbbf24);
       text-decoration: none;
     }
 

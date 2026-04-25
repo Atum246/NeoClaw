@@ -58,8 +58,8 @@ export class MemoryVisualizer extends LitElement {
       align-items: center;
       padding: 2px 8px;
       border-radius: 9999px;
-      background: var(--accent-subtle, rgba(255, 92, 92, 0.1));
-      color: var(--accent, #ff5c5c);
+      background: var(--accent-subtle, rgba(251, 191, 36, 0.1));
+      color: var(--accent, #fbbf24);
       font-size: 11px;
       font-weight: 600;
     }
@@ -84,7 +84,7 @@ export class MemoryVisualizer extends LitElement {
     }
 
     .mem-search input:focus {
-      border-color: var(--accent, #ff5c5c);
+      border-color: var(--accent, #fbbf24);
     }
 
     .mem-categories {
@@ -121,9 +121,9 @@ export class MemoryVisualizer extends LitElement {
     }
 
     .cat-chip--active {
-      background: var(--accent-subtle, rgba(255, 92, 92, 0.1));
-      color: var(--accent, #ff5c5c);
-      border-color: var(--accent, #ff5c5c);
+      background: var(--accent-subtle, rgba(251, 191, 36, 0.1));
+      color: var(--accent, #fbbf24);
+      border-color: var(--accent, #fbbf24);
     }
 
     .mem-body {
@@ -221,7 +221,7 @@ export class MemoryVisualizer extends LitElement {
       width: 100%;
       min-height: 60px;
       padding: 8px;
-      border: 1px solid var(--accent, #ff5c5c);
+      border: 1px solid var(--accent, #fbbf24);
       background: var(--bg, #0e1015);
       color: var(--text, #d4d4d8);
       font-size: 12px;
@@ -248,7 +248,7 @@ export class MemoryVisualizer extends LitElement {
     }
 
     .edit-btn--save {
-      background: var(--accent, #ff5c5c);
+      background: var(--accent, #fbbf24);
       color: white;
     }
 
@@ -283,7 +283,7 @@ export class MemoryVisualizer extends LitElement {
     }
 
     .confidence-dot--filled {
-      background: var(--accent, #ff5c5c);
+      background: var(--accent, #fbbf24);
     }
 
     .memory-tags {

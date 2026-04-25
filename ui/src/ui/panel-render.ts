@@ -7,7 +7,7 @@ import type { AppViewState } from "./app-view-state.ts";
 import { downloadText, downloadJson, downloadAsZip, copyToClipboard } from "./export-utils.ts";
 import { notifications } from "./notifications.ts";
 
-export type PanelTab = "execution" | "artifacts" | "files" | "memory" | "timeline" | "none";
+export type PanelTab = "execution" | "artifacts" | "files" | "memory" | "timeline" | "devices" | "none";
 
 const PANEL_TABS: Array<{ id: PanelTab; icon: string; label: string }> = [
   { id: "execution", icon: "⚡", label: "Execution" },
@@ -15,6 +15,7 @@ const PANEL_TABS: Array<{ id: PanelTab; icon: string; label: string }> = [
   { id: "files", icon: "📁", label: "Files" },
   { id: "memory", icon: "🧠", label: "Memory" },
   { id: "timeline", icon: "🕐", label: "Timeline" },
+  { id: "devices", icon: "🏠", label: "Devices" },
 ];
 
 export function getPanelTabs() {
@@ -71,6 +72,8 @@ export function renderPanelContent(
       return renderMemoryPanelContent(state);
     case "timeline":
       return renderTimelinePanelContent(state);
+    case "devices":
+      return renderDevicesPanelContent(state);
     default:
       return nothing;
   }
@@ -164,9 +167,41 @@ function renderTimelinePanelContent(state: AppViewState): unknown {
     <task-timeline
       .events=${events}
       @export-timeline=${() => {
-        downloadText(JSON.stringify(events, null, 2), "timeline.json");
+        downloadJson(events, "timeline.json");
+        notifications.send({ title: "📤 Timeline Exported", body: `${events.length} events exported` });
       }}
     ></task-timeline>
+  `;
+}
+
+function renderDevicesPanelContent(state: AppViewState): unknown {
+  const devices = extractDevices(state);
+
+  return html`
+    <device-control-hub
+      .devices=${devices}
+      @device-command=${(e: CustomEvent) => {
+        // Forward device command to gateway
+        console.log("Device command:", e.detail);
+        notifications.send({
+          title: "📱 Device Command",
+          body: `${e.detail.action} sent to device`,
+          silent: true,
+        });
+      }}
+      @scan-devices=${() => {
+        notifications.send({ title: "🔍 Scanning", body: "Looking for devices on your network..." });
+      }}
+      @activate-scene=${(e: CustomEvent) => {
+        notifications.send({
+          title: "⚡ Scene Activated",
+          body: `${e.detail.scene} mode enabled`,
+        });
+      }}
+      @export-devices=${() => {
+        downloadJson(devices, "devices.json");
+      }}
+    ></device-control-hub>
   `;
 }
 
@@ -589,4 +624,77 @@ function getExtension(type: string): string {
     markdown: "md",
   };
   return map[type] ?? "txt";
+}
+
+interface Device {
+  id: string;
+  name: string;
+  type: "tv" | "phone" | "speaker" | "light" | "thermostat" | "camera" | "lock" | "plug" | "router" | "computer" | "watch" | "car" | "unknown";
+  room?: string;
+  status: "online" | "offline" | "standby" | "error";
+  capabilities: string[];
+  state?: Record<string, unknown>;
+  lastSeen?: number;
+  manufacturer?: string;
+  model?: string;
+}
+
+function extractDevices(state: AppViewState): Device[] {
+  // Extract devices from nodes/paired devices
+  const devices: Device[] = [];
+  const nodes = (state.nodes ?? []) as Array<Record<string, unknown>>;
+
+  for (const node of nodes) {
+    const nodeId = (node.id as string) ?? `device-${devices.length}`;
+    const nodeName = (node.name as string) ?? "Unknown Device";
+    const nodeType = (node.type as string) ?? "unknown";
+
+    devices.push({
+      id: nodeId,
+      name: nodeName,
+      type: mapNodeType(nodeType),
+      status: (node.status as Device["status"]) ?? "offline",
+      capabilities: (node.capabilities as string[]) ?? [],
+      lastSeen: node.lastSeen as number | undefined,
+    });
+  }
+
+  // Add demo devices if none found
+  if (devices.length === 0) {
+    devices.push(
+      { id: "tv-living", name: "Living Room TV", type: "tv", room: "Living Room", status: "online", capabilities: ["power", "volume", "channel"], state: { volume: 45, channel: "HDMI 1" } },
+      { id: "speaker-kitchen", name: "Kitchen Speaker", type: "speaker", room: "Kitchen", status: "online", capabilities: ["play", "volume"], state: { volume: 60, track: "Lo-Fi Beats" } },
+      { id: "light-bedroom", name: "Bedroom Light", type: "light", room: "Bedroom", status: "online", capabilities: ["brightness", "color"], state: { brightness: 80, color: "#fbbf24" } },
+      { id: "thermo-main", name: "Thermostat", type: "thermostat", room: "Hallway", status: "online", capabilities: ["temperature", "mode"], state: { temperature: 22, mode: "auto" } },
+      { id: "camera-front", name: "Front Door Camera", type: "camera", room: "Front Door", status: "online", capabilities: ["stream", "record"], state: { recording: true } },
+      { id: "lock-front", name: "Front Door Lock", type: "lock", room: "Front Door", status: "online", capabilities: ["lock"], state: { locked: true } },
+      { id: "phone-john", name: "John's Phone", type: "phone", status: "standby", capabilities: ["notify", "ring"] },
+      { id: "laptop-john", name: "John's Laptop", type: "computer", status: "online", capabilities: ["screen", "files"] },
+      { id: "watch-john", name: "John's Watch", type: "watch", status: "standby", capabilities: ["notify", "health"] },
+      { id: "router-main", name: "WiFi Router", type: "router", room: "Office", status: "online", capabilities: ["restart", "status"] },
+    );
+  }
+
+  return devices;
+}
+
+function mapNodeType(type: string): Device["type"] {
+  const typeMap: Record<string, Device["type"]> = {
+    mobile: "phone",
+    desktop: "computer",
+    laptop: "computer",
+    tablet: "phone",
+    tv: "tv",
+    smarttv: "tv",
+    speaker: "speaker",
+    light: "light",
+    thermostat: "thermostat",
+    camera: "camera",
+    lock: "lock",
+    plug: "plug",
+    router: "router",
+    watch: "watch",
+    car: "car",
+  };
+  return typeMap[type.toLowerCase()] ?? "unknown";
 }

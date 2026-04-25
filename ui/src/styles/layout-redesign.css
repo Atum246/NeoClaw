@@ -103,8 +103,8 @@
 }
 
 .panel-tab--active {
-  background: var(--accent-subtle, rgba(255, 92, 92, 0.08));
-  color: var(--accent, #ff5c5c);
+  background: var(--accent-subtle, rgba(251, 191, 36, 0.08));
+  color: var(--accent, #fbbf24);
 }
 
 .panel-tab-icon {
@@ -119,7 +119,7 @@
   height: 18px;
   padding: 0 5px;
   border-radius: 9999px;
-  background: var(--accent, #ff5c5c);
+  background: var(--accent, #fbbf24);
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -184,7 +184,7 @@ resizable-divider::after {
 
 resizable-divider:hover::after {
   width: 3px;
-  background: var(--accent, #ff5c5c);
+  background: var(--accent, #fbbf24);
 }
 
 /* --- Topbar Enhancements --- */
@@ -251,8 +251,8 @@ resizable-divider:hover::after {
 }
 
 .nav-item--active {
-  background: var(--accent-subtle, rgba(255, 92, 92, 0.08));
-  color: var(--accent, #ff5c5c);
+  background: var(--accent-subtle, rgba(251, 191, 36, 0.08));
+  color: var(--accent, #fbbf24);
 }
 
 .nav-item-icon {
@@ -288,8 +288,8 @@ resizable-divider:hover::after {
 }
 
 .nav-chat-item--active {
-  background: var(--accent-subtle, rgba(255, 92, 92, 0.08));
-  color: var(--accent, #ff5c5c);
+  background: var(--accent-subtle, rgba(251, 191, 36, 0.08));
+  color: var(--accent, #fbbf24);
 }
 
 .nav-chat-item-icon {

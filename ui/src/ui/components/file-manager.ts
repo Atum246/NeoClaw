@@ -82,13 +82,13 @@ export class FileManager extends LitElement {
     }
 
     .fm-btn--primary {
-      background: var(--accent, #ff5c5c);
+      background: var(--accent, #fbbf24);
       color: white;
-      border-color: var(--accent, #ff5c5c);
+      border-color: var(--accent, #fbbf24);
     }
 
     .fm-btn--primary:hover {
-      background: var(--accent-hover, #ff7070);
+      background: var(--accent-hover, #fcd34d);
     }
 
     .fm-search {
@@ -114,7 +114,7 @@ export class FileManager extends LitElement {
     }
 
     .fm-search input:focus {
-      border-color: var(--accent, #ff5c5c);
+      border-color: var(--accent, #fbbf24);
     }
 
     .fm-search input::placeholder {
@@ -176,8 +176,8 @@ export class FileManager extends LitElement {
     }
 
     .file-item--selected {
-      background: var(--accent-subtle, rgba(255, 92, 92, 0.08));
-      color: var(--accent, #ff5c5c);
+      background: var(--accent-subtle, rgba(251, 191, 36, 0.08));
+      color: var(--accent, #fbbf24);
     }
 
     .file-icon {
@@ -197,7 +197,7 @@ export class FileManager extends LitElement {
     }
 
     .file-item--selected .file-name {
-      color: var(--accent, #ff5c5c);
+      color: var(--accent, #fbbf24);
     }
 
     .file-name--dir {
@@ -257,7 +257,7 @@ export class FileManager extends LitElement {
     }
 
     .file-grid-item--selected {
-      background: var(--accent-subtle, rgba(255, 92, 92, 0.08));
+      background: var(--accent-subtle, rgba(251, 191, 36, 0.08));
     }
 
     .file-grid-icon {
@@ -320,7 +320,7 @@ export class FileManager extends LitElement {
     .file-checkbox {
       width: 14px;
       height: 14px;
-      accent-color: var(--accent, #ff5c5c);
+      accent-color: var(--accent, #fbbf24);
       flex-shrink: 0;
     }
   `;

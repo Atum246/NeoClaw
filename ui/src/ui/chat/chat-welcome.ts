@@ -66,6 +66,7 @@ export function renderWelcomeState(props: ChatWelcomeProps) {
       <div class="agent-chat__badges">
         <span class="agent-chat__badge"><img src=${logoUrl} alt="" /> Ready to chat</span>
       </div>
+      <p style="font-size: 16px; color: var(--text-strong); margin: 8px 0;">What can I help you with? 💬</p>
       <p class="agent-chat__hint">Type a message below &middot; <kbd>/</kbd> for commands</p>
       <div class="agent-chat__panel-hints" style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; justify-content: center;">
         <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">⚡ Ctrl+1 Execution</span>
@@ -73,6 +74,7 @@ export function renderWelcomeState(props: ChatWelcomeProps) {
         <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">📁 Ctrl+3 Files</span>
         <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">🧠 Ctrl+4 Memory</span>
         <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">🕐 Ctrl+5 Timeline</span>
+        <span style="font-size: 11px; color: var(--muted); padding: 4px 8px; background: var(--bg-hover); border-radius: 6px;">🏠 Ctrl+6 Devices</span>
       </div>
       <div class="agent-chat__suggestions">
         ${WELCOME_SUGGESTIONS.map(

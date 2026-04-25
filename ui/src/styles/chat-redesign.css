@@ -54,8 +54,8 @@
 }
 
 .chat-avatar--user {
-  background: var(--accent-subtle, rgba(255, 92, 92, 0.1));
-  color: var(--accent, #ff5c5c);
+  background: var(--accent-subtle, rgba(251, 191, 36, 0.1));
+  color: var(--accent, #fbbf24);
 }
 
 .chat-avatar--assistant {
@@ -76,7 +76,7 @@
 }
 
 .chat-line.user .chat-bubble {
-  background: var(--accent, #ff5c5c);
+  background: var(--accent, #fbbf24);
   color: white;
   border-bottom-right-radius: 4px;
 }
@@ -289,7 +289,7 @@
 }
 
 .execution-step-icon--running {
-  background: var(--accent, #ff5c5c);
+  background: var(--accent, #fbbf24);
   color: white;
   animation: pulse 1.5s ease-in-out infinite;
 }
@@ -305,8 +305,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 92, 92, 0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(255, 92, 92, 0); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+  50% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0); }
 }
 
 /* --- Welcome Screen --- */
@@ -391,8 +391,8 @@
 }
 
 .agent-chat__input textarea:focus {
-  border-color: var(--accent, #ff5c5c);
-  box-shadow: 0 0 0 2px var(--accent-subtle, rgba(255, 92, 92, 0.1));
+  border-color: var(--accent, #fbbf24);
+  box-shadow: 0 0 0 2px var(--accent-subtle, rgba(251, 191, 36, 0.1));
 }
 
 .agent-chat__input textarea::placeholder {
@@ -517,7 +517,7 @@
 
 .panel-tab-btn:hover,
 .panel-tab-btn--active {
-  color: var(--accent, #ff5c5c);
+  color: var(--accent, #fbbf24);
 }
 
 .panel-tab-btn-icon {

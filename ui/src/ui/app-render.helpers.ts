@@ -384,6 +384,13 @@ export function renderChatControls(state: AppViewState) {
         aria-label="Toggle timeline panel"
         data-tooltip="Timeline"
       >🕐</button>
+      <button
+        class="btn btn--sm btn--icon ${state.panelOpen && state.panelTab === "devices" ? "active" : ""}"
+        @click=${() => state.handleTogglePanel("devices")}
+        title="Device Hub (Ctrl+6)"
+        aria-label="Toggle device hub"
+        data-tooltip="Devices"
+      >🏠</button>
     </div>
   `;
 }
